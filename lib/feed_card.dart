@@ -1,101 +1,74 @@
-import 'dart:convert';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-class FeedCard extends StatefulWidget {
-  const FeedCard({super.key});
-
-  @override
-  State<FeedCard> createState() => _FeedCardState();
-}
-
-class _FeedCardState extends State<FeedCard> {
-  List<dynamic> feedList = [];
-  int tamanhoPagina = 6;
-  var data;
-  ScrollController _scrollController = ScrollController();
-
-  Future<void> readJson() async {
-    final String response =
-        await rootBundle.loadString('assets/json/feeds.json');
-    data = await json.decode(response);
-
-    setState(() {
-      loadList();
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        loadList();
-      }
-    });
-
-    readJson();
-  }
-
-  void loadList() {
-    if (tamanhoPagina < 14) {
-      for (var i = tamanhoPagina; i < tamanhoPagina + 6; i++) {
-        feedList.add(data['feeds'][i - 6]);
-        print(feedList.length);
-      }
-      if (tamanhoPagina <= 12) {
-        tamanhoPagina += 6;
-        if (tamanhoPagina > 14) {
-          tamanhoPagina = 14;
-        }
-      }
-    } else {
-      if (tamanhoPagina == 14) {
-        for (var i = tamanhoPagina; i < tamanhoPagina + 2; i++) {
-          feedList.add(data['feeds'][i - 2]);
-        }
-        tamanhoPagina += 1;
-      }
-    }
-
-    setState(() {});
-    print(tamanhoPagina);
-  }
+class FeedCard extends StatelessWidget {
+  final String nomeEmpresa;
+  final String nomeProduto;
+  final String descricaoProduto;
+  final double precoProduto;
+  final int likes;
+  const FeedCard({
+    Key? key,
+    required this.nomeEmpresa,
+    required this.nomeProduto,
+    required this.descricaoProduto,
+    required this.precoProduto,
+    required this.likes,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Feeds'),
-      ),
-      body: GridView.builder(
-        controller: _scrollController,
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 1.8 / 3,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 5),
-        itemCount: feedList.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: Column(
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset('assets/imgs/produto.jpeg'),
+          ListTile(
+            leading:
+                CircleAvatar(child: Image.asset('assets/imgs/avatar.jpeg')),
+          ),
+          Padding(
+              padding: const EdgeInsets.only(left: 25.0, bottom: 10.0),
+              child: Text(
+                nomeEmpresa,
+                style: const TextStyle(fontSize: 17),
+              )),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              nomeProduto,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: SizedBox(
+              height: 100,
+              child: Text(descricaoProduto),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              "R\$$precoProduto",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset('assets/imgs/produto.jpeg'),
-                ListTile(
-                  leading: CircleAvatar(
-                      child: Image.asset('assets/imgs/avatar.jpeg')),
-                  title: Text(feedList[index]["_id"].toString()),
+                Icon(
+                  Icons.favorite_rounded,
+                  size: 16,
                 ),
-                Text(feedList[index]["company"]["name"]),
-                Text(feedList[index]["product"]["name"]),
-                Text(feedList[index]["product"]["description"]),
-                Text(feedList[index]["product"]["price"].toString()),
+                Text(
+                  likes.toString(),
+                ),
               ],
             ),
-          );
-        },
+          )
+        ],
       ),
     );
   }

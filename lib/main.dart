@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'feed_card.dart';
+import 'feed.dart';
+import 'login.dart';
 
 void main() {
   runApp(App());
@@ -9,7 +10,13 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: FeedCard(),
+      debugShowCheckedModeBanner: false,
+      //home: Feed(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Feed(),
+        '/login': (context) => Login(),
+      },
     );
   }
 }
