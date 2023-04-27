@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'autenticador.dart';
 import 'feed_card.dart';
 
 class Feed extends StatefulWidget {
@@ -109,7 +111,11 @@ class _FeedState extends State<Feed> {
           ),
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/login');
+              if (FirebaseAuth.instance.currentUser != null) {
+                Autenticador().signOut();
+              } else {
+                Autenticador().signInWithGoogle();
+              }
             },
             icon: const Icon(Icons.account_circle_outlined),
             color: Colors.black,

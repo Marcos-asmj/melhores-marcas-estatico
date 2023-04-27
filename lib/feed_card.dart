@@ -27,7 +27,7 @@ class FeedCard extends StatelessWidget {
                 CircleAvatar(child: Image.asset('assets/imgs/avatar.jpeg')),
           ),
           Padding(
-              padding: const EdgeInsets.only(left: 25.0, bottom: 10.0),
+              padding: const EdgeInsets.only(left: 18.0, bottom: 10.0),
               child: Text(
                 nomeEmpresa,
                 style: const TextStyle(fontSize: 17),
@@ -54,7 +54,7 @@ class FeedCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 8),
+            padding: EdgeInsets.only(left: 10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
