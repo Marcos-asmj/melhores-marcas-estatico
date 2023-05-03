@@ -24,7 +24,6 @@ class _FeedState extends State<Feed> {
     final String response =
         await rootBundle.loadString('assets/json/feeds.json');
     data = await json.decode(response);
-    //print(data);
 
     setState(() {
       loadList();
@@ -71,6 +70,17 @@ class _FeedState extends State<Feed> {
     //print(feedList);
   }
 
+  Future<void> refreshList() async {
+    feedList = [];
+    tamanhoPagina = 6;
+
+    loadList();
+
+    setState(() {
+      foundFeeds = feedList;
+    });
+  }
+
   void _runFilter(String enteredKeyword) {
     List<dynamic> results = [];
     if (enteredKeyword.isEmpty) {
@@ -103,7 +113,6 @@ class _FeedState extends State<Feed> {
                 onChanged: (value) => _runFilter(value),
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  //labelText: 'Search',
                   suffixIcon: Icon(Icons.search),
                 ),
               ),
@@ -122,22 +131,20 @@ class _FeedState extends State<Feed> {
           ),
         ],
       ),
-      body: GridView.builder(
-        controller: _scrollController,
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 1.2 / 3,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 5),
-        itemCount: foundFeeds.length,
-        itemBuilder: (context, index) {
-          return FeedCard(
-              nomeEmpresa: foundFeeds[index]["company"]["name"],
-              nomeProduto: foundFeeds[index]["product"]["name"],
-              descricaoProduto: foundFeeds[index]["product"]["description"],
-              precoProduto: foundFeeds[index]["product"]["price"],
-              likes: foundFeeds[index]["likes"]);
-        },
+      body: RefreshIndicator(
+        onRefresh: () => refreshList(),
+        child: GridView.builder(
+          controller: _scrollController,
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              childAspectRatio: 1.2 / 3,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5),
+          itemCount: foundFeeds.length,
+          itemBuilder: (context, index) {
+            return FeedCard(feed: [foundFeeds[index]]);
+          },
+        ),
       ),
     );
   }
