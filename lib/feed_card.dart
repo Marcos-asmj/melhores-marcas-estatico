@@ -27,13 +27,11 @@ class FeedCard extends StatelessWidget {
             ListTile(
               leading:
                   CircleAvatar(child: Image.asset('assets/imgs/avatar.jpeg')),
+              title: Text(
+                feed[0]["company"]["name"],
+                style: const TextStyle(fontSize: 17),
+              ),
             ),
-            Padding(
-                padding: const EdgeInsets.only(left: 18.0, bottom: 10.0),
-                child: Text(
-                  feed[0]["company"]["name"],
-                  style: const TextStyle(fontSize: 17),
-                )),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Text(
@@ -52,18 +50,18 @@ class FeedCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                feed[0]["product"]["price"].toString(),
-                //"R\$$precoProduto",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
               padding: EdgeInsets.only(left: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 5.0),
+                    child: Text(
+                      feed[0]["product"]["price"].toString(),
+                      //"R\$$precoProduto",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
                   Icon(
                     Icons.favorite_rounded,
                     size: 16,

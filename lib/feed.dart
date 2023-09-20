@@ -102,7 +102,7 @@ class _FeedState extends State<Feed> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue,
         title: const Text('Feeds'),
         actions: <Widget>[
           Expanded(
@@ -137,7 +137,7 @@ class _FeedState extends State<Feed> {
           controller: _scrollController,
           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 200,
-              childAspectRatio: 1.2 / 3,
+              childAspectRatio: 1.5 / 3,
               crossAxisSpacing: 5,
               mainAxisSpacing: 5),
           itemCount: foundFeeds.length,
