@@ -25,8 +25,11 @@ class FeedCard extends StatelessWidget {
           children: [
             Image.asset('assets/imgs/produto.jpeg'),
             ListTile(
-              leading:
-                  CircleAvatar(child: Image.asset('assets/imgs/avatar.jpeg')),
+              leading: CircleAvatar(
+                child: ClipOval(
+                  child: Image.asset('assets/imgs/avatar.jpeg'),
+                ),
+              ),
               title: Text(
                 feed[0]["company"]["name"],
                 style: const TextStyle(fontSize: 17),
@@ -50,7 +53,7 @@ class FeedCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.only(left: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -62,7 +65,7 @@ class FeedCard extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Icon(
+                  const Icon(
                     Icons.favorite_rounded,
                     size: 16,
                   ),

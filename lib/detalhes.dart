@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
@@ -27,6 +28,7 @@ class _DetalhesState extends State<Detalhes> {
   late final PageController _pageController;
   var CommentController = TextEditingController();
   String newComment = '';
+  var curtido = false;
 
   @override
   void initState() {
@@ -117,6 +119,37 @@ class _DetalhesState extends State<Detalhes> {
                 style: const TextStyle(color: Colors.black))
             : const SizedBox.shrink(),
         iconTheme: const IconThemeData(color: Colors.black),
+        actions: <Widget>[
+          CircleAvatar(
+            child: ClipOval(
+              child: Image.asset('assets/imgs/avatar.jpeg'),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left: 10),
+          ),
+          Visibility(
+            visible: FirebaseAuth.instance.currentUser != null,
+            child: IconButton(
+              onPressed: () {
+                if (curtido == false) {
+                  setState(() {
+                    results[0]["likes"] = results[0]["likes"] + 1;
+                    curtido = true;
+                  });
+                } else {
+                  setState(() {
+                    results[0]["likes"] = results[0]["likes"] - 1;
+                    curtido = false;
+                  });
+                }
+              },
+              icon: Icon(
+                  (curtido == false) ? Icons.favorite_border : Icons.favorite),
+              color: Colors.red,
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -190,29 +223,32 @@ class _DetalhesState extends State<Detalhes> {
               "Comentários",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            TextField(
-              controller: CommentController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: 'Digite aqui seu comentário...',
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    if (newComment.isNotEmpty) {
-                      addComment(newComment);
-                      setState(() {
-                        CommentController.clear();
-                        newComment = '';
-                      });
-                    }
-                  },
-                  child: const Icon(Icons.send),
+            Visibility(
+              visible: FirebaseAuth.instance.currentUser != null,
+              child: TextField(
+                controller: CommentController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: 'Digite aqui seu comentário...',
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      if (newComment.isNotEmpty) {
+                        addComment(newComment);
+                        setState(() {
+                          CommentController.clear();
+                          newComment = '';
+                        });
+                      }
+                    },
+                    child: const Icon(Icons.send),
+                  ),
                 ),
+                onChanged: (comment) {
+                  setState(() {
+                    newComment = comment;
+                  });
+                },
               ),
-              onChanged: (comment) {
-                setState(() {
-                  newComment = comment;
-                });
-              },
             ),
             ListView.builder(
               reverse: true,
@@ -220,24 +256,60 @@ class _DetalhesState extends State<Detalhes> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: comments.length,
               itemBuilder: (context, index) {
-                return Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(comments[index]["content"]),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Text(
-                            comments[index]["user"]["name"],
-                          ),
-                          const SizedBox(width: 16),
-                          Text(
-                            formatarDataHora(comments[index]["datetime"]),
-                          ),
-                        ],
-                      ),
-                    ],
+                return Dismissible(
+                  key: Key(comments[index]["_id"].toString()),
+                  onDismissed: (direction) {
+                    final dismissedComment = comments[index];
+
+                    setState(() {
+                      comments.removeAt(index);
+                    });
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Deseja apagar esse comentário?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  comments.insert(index, dismissedComment);
+                                });
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Não'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Sim'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(comments[index]["content"]),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              comments[index]["user"]["name"],
+                            ),
+                            const SizedBox(width: 16),
+                            Text(
+                              formatarDataHora(comments[index]["datetime"]),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

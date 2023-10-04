@@ -122,6 +122,24 @@ class _FeedState extends State<Feed> {
             onPressed: () {
               if (FirebaseAuth.instance.currentUser != null) {
                 Autenticador().signOut();
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Sessão encerrada"),
+                      content:
+                          const Text("Sua sessão foi encerrada com sucesso."),
+                      actions: [
+                        TextButton(
+                          child: const Text("OK"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
               } else {
                 Autenticador().signInWithGoogle();
               }
